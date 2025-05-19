@@ -1,1 +1,1 @@
-ALTER TABLE task DROP INDEX idx_status;
+DROP INDEX IF EXISTS idx_status;

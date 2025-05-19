@@ -1,1 +1,1 @@
-ALTER TABLE task ADD INDEX idx_status (`status`);
+CREATE INDEX idx_status ON task (status);
