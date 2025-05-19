@@ -1,9 +1,0 @@
-psql:
-  dbname: "taskdb"
-  host: "postgres"
-  port: 5432
-  user: "postgres"
-  pass: "postgres"
-  sslmode: "disable"
-  whitelist:
-    - "task"
