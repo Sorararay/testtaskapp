@@ -4,8 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-if [ "$#" -ne 6 ]; then
-  echo "usage: $0 <db_host> <db_port> <db_name> <username> <password> <command>"
+if [ "$#" -ne 7 ]; then
+  echo "usage: $0 <db_host> <db_port> <db_name> <username> <password> <command> <ssl_mode>"
   exit 1
 fi
 
@@ -21,12 +21,14 @@ else
 fi
 
 command=$6
+ssl_mode=$7
 
-echo "Waiting for MySQL to start..."
-until mysql -h $db_host -P $db_port -u $db_username -p$db_password -e "show databases;" &> /dev/null; do
-  >&2 echo "MySQL is unavailable - sleeping"
+
+echo "Waiting for PostgreSQL to start..."
+until PGPASSWORD=$db_password psql -U $db_username -h $db_host -p $db_port -lqt &> /dev/null; do
+  >&2 echo "PostgreSQL is unavailable - sleeping"
   sleep 1
 done
-echo "MySQL is up - executing command"
+echo "PostgreSQL is up - executing command"
 
-migrate -path ./history -database mysql://$db_username:$db_password@tcp\($db_host:$db_port\)/$db_name $command
+migrate -path ./history -database postgres://$db_username:$db_password@$db_host:$db_port/$db_name?sslmode=$ssl_mode $command
