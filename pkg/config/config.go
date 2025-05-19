@@ -12,13 +12,14 @@ type Application struct {
 }
 
 type Database struct {
-    Host            string        `yaml:"host"`
-    Username        string        `yaml:"username"`
-    Password        string        `yaml:"password"`
-    DBName          string        `yaml:"dbname"`
-    MaxIdleConns    int           `yaml:"maxIdleConns"`
-    MaxOpenConns    int           `yaml:"maxOpenConns"`
-    ConnMaxLifetime time.Duration `yaml:"connMaxLifetime"`
+	Host            string        `yaml:"host"`
+	Username        string        `yaml:"username"`
+	Password        string        `yaml:"password"`
+	DBName          string        `yaml:"dbname"`
+	MaxIdleConns    int           `yaml:"maxIdleConns"`
+	MaxOpenConns    int           `yaml:"maxOpenConns"`
+	ConnMaxLifetime time.Duration `yaml:"connMaxLifetime"`
+	SSLMode         string        `yaml:"sslmode"`
 }
 
 func LoadConfigFile(configPath string) (*Application, error) {

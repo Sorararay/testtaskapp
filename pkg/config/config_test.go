@@ -18,6 +18,7 @@ database:
   maxIdleConns: 5
   maxOpenConns: 10
   connMaxLifetime: 1h
+  sslmode: disable
 `
 )
 
@@ -40,4 +41,5 @@ func TestLoadConfigFile(t *testing.T) {
 	assert.Equal(t, 5, actual.Database.MaxIdleConns)
 	assert.Equal(t, 10, actual.Database.MaxOpenConns)
 	assert.Equal(t, 1*time.Hour, actual.Database.ConnMaxLifetime)
+	assert.Equal(t, "disable", actual.Database.SSLMode)
 }

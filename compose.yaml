@@ -1,7 +1,6 @@
 services:
   postgres:
-    build: 
-      context: ./containers/postgres
+    image: postgres:16.6-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -28,23 +27,28 @@ services:
       - postgres
 
 
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: ./containers/api/Dockerfile
-  #   depends_on:
-  #     - mysql
-  #   healthcheck:
-  #     test: "curl -f http://localhost:8180/healthz || exit 1"
-  #     interval: 10s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 30s
-  #   command:
-  #     - "server"
-  #     - "--config-file=/run/secrets/api_config"
-  #   secrets:
-  #     - api_config
+  api:
+    build:
+      context: .
+      dockerfile: ./containers/api/Dockerfile
+    depends_on:
+      - postgres
+    # healthcheck:
+    #   test: "curl -f http://localhost:8180/healthz || exit 1"
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 30s
+    # command:
+    #   - "server"
+    #   - "--config-file=/run/secrets/api_config"
+    # secrets:
+    #   - api_config
+    volumes:
+      - ./containers/api/app:/app
+    command: /bin/bash
+    tty: true
+
 
   # nginx-api:
   #   build:

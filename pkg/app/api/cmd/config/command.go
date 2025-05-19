@@ -25,11 +25,12 @@ func NewCommand() *cobra.Command {
 		outputFile: "api-config-local.yaml",
 		database: &config.Database{
 			Host:            "127.0.0.1",
-			Username:        "taskapp_user",
-			DBName:          "taskapp",
+			Username:        "postgres",
+			DBName:          "taskdb", //書き換え
 			MaxIdleConns:    5,
 			MaxOpenConns:    10,
 			ConnMaxLifetime: 1 * time.Hour,
+			SSLMode:         "disable",
 		},
 	}
 	cmd := &cobra.Command{
@@ -45,6 +46,7 @@ func NewCommand() *cobra.Command {
 	cmd.Flags().IntVar(&c.database.MaxIdleConns, "database-max-idle-conns", c.database.MaxIdleConns, "the maximum number of idle connections")
 	cmd.Flags().IntVar(&c.database.MaxOpenConns, "database-max-open-conns", c.database.MaxOpenConns, "The maximum number of open connections")
 	cmd.Flags().DurationVar(&c.database.ConnMaxLifetime, "database-conn-max-lifetime", c.database.ConnMaxLifetime, "The maximum amount of time a connection")
+	cmd.Flags().StringVar(&c.database.SSLMode, "ssl-mode", c.database.SSLMode, "The ssl mode")
 
 	cmd.MarkFlagRequired("database-password")
 	return cmd
