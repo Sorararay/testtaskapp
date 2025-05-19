@@ -30,3 +30,28 @@ func (d *mysqlDatasource) DSN() string {
 func (d mysqlDatasource) Driver() string {
 	return "mysql"
 }
+
+// pgDatasource は PostgreSQL のデータソース情報を保持します。
+type pgDatasource struct {
+	driverName string
+	dsn        string
+}
+
+// NewPgDatasource は新しい PostgreSQL データソースを作成します。
+// command.go で組み立て済みのDSNを受け取ります。
+func NewPgDatasource(driverName string, dsn string) Datasource {
+	return &pgDatasource{
+		driverName: driverName,
+		dsn:        dsn,
+	}
+}
+
+// DSN は PostgreSQL のデータソース名 (DSN) を返します。
+func (d *pgDatasource) DSN() string {
+	return d.dsn
+}
+
+// Driver は PostgreSQL のドライバ名を返します。
+func (d *pgDatasource) Driver() string {
+	return d.driverName
+}

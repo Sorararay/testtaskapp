@@ -10,7 +10,7 @@ import (
 	"golang.org/x/exp/slog"
 
 	"github.com/gihyodocker/taskapp/pkg/id"
-	"github.com/gihyodocker/taskapp/pkg/model"
+	"github.com/gihyodocker/taskapp/pkg/models"
 	"github.com/gihyodocker/taskapp/pkg/payload"
 	"github.com/gihyodocker/taskapp/pkg/repository"
 )
@@ -112,7 +112,7 @@ func (h *Task) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := model.Task{
+	m := models.Task{
 		ID:      id.MakeULID().String(),
 		Title:   input.Title,
 		Content: input.Content,

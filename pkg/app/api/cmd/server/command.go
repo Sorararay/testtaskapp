@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
+	_ "github.com/lib/pq" // PostgreSQLドライバをインポート
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
 	"golang.org/x/sync/errgroup"
@@ -53,10 +55,10 @@ func (c *command) execute(ctx context.Context) error {
 		)
 		return err
 	}
-	// Open MySQL connection
-	dbConn, err := createMySQL(*appConfig.Database)
+	// Open PostgreSQL connection
+	dbConn, err := createPostgreSQL(*appConfig.Database)
 	if err != nil {
-		slog.Error("failed to open MySQL connection", err)
+		slog.Error("failed to open PostgreSQL connection", err)
 		return err
 	}
 
@@ -90,13 +92,31 @@ func (c *command) execute(ctx context.Context) error {
 	return nil
 }
 
-func createMySQL(conf config.Database) (*sql.DB, error) {
+// createPostgreSQL は PostgreSQL データベースへの接続を確立します。
+func createPostgreSQL(conf config.Database) (*sql.DB, error) {
+	// PostgreSQL用のDSN (Data Source Name) を組み立てます。
+	// conf.Host には "ホスト名:ポート番号" (例: "localhost:5432") またはホスト名のみを指定します。
+	// 環境やDSNの形式に合わせて調整してください。
+	// 一般的なURI形式のDSN:
+	dsn := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=%s",
+		conf.Username,
+		conf.Password,
+		conf.Host, // 例: "localhost:5432" や "your-postgres-server.com"
+		conf.DBName,
+		conf.SSLMode,
+	)
+
+	// db.OpenDB が期待する db.Datasource オブジェクトを作成します。
+	// db.NewDatasource がドライバ名とDSN文字列から Datasource を作成すると仮定します。
+	pgDatasource := db.NewPgDatasource("postgres", dsn)
+
 	options := []db.Option{
 		db.WithMaxIdleConns(conf.MaxIdleConns),
 		db.WithMaxOpenConns(conf.MaxOpenConns),
 		db.WithConnMaxLifetime(conf.ConnMaxLifetime),
 	}
 
-	ds := db.NewMySQLDatasource(conf.Username, conf.Password, conf.Host, conf.DBName)
-	return db.OpenDB(ds, options...)
+	// db.OpenDB が第1引数にドライバ名 ("postgres")、第2引数にDSN文字列を取ると仮定しています。
+	// 修正: db.OpenDB は第1引数に db.Datasource オブジェクトを取ります。
+	return db.OpenDB(pgDatasource, options...)
 }
